@@ -1,5 +1,6 @@
 streamlit
 cadquery==2.4.0
+cadquery-ocp==7.7.2
 numpy
 scikit-learn
 pyvista
