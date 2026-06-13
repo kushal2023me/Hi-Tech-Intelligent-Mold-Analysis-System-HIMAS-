@@ -1,0 +1,6 @@
+streamlit
+cadquery
+numpy
+scikit-learn
+pyvista
+reportlab
