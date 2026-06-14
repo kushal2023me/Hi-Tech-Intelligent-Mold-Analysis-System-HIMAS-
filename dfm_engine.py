@@ -704,17 +704,22 @@ def generate_visualization(
     stl_path
 ):
 
-    return "visualization.png"
-   # import pyvista as pv
-   # import numpy as np
+    import os
 
-   # pv.OFF_SCREEN = True
+    os.environ["PYVISTA_OFF_SCREEN"] = "true"
 
-   # mesh = pv.read(
-#    stl_path
- #   )
+    import pyvista as pv
+    import numpy as np
 
-   # plotter = pv.Plotter(off_screen=True)
+    pv.start_xvfb()
+
+    pv.OFF_SCREEN = True
+
+    mesh = pv.read(
+    stl_path
+    )
+
+    plotter = pv.Plotter(off_screen=True)
 
 # ==========================
 # CAD MODEL
