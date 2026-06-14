@@ -711,7 +711,6 @@ def generate_visualization(
     import pyvista as pv
     import numpy as np
 
-    pv.start_xvfb()
 
     pv.OFF_SCREEN = True
 
