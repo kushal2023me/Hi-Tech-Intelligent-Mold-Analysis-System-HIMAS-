@@ -708,6 +708,8 @@ def generate_visualization(
     import pyvista as pv
     import numpy as np
 
+    pv.OFF_SCREEN = True
+
     mesh = pv.read(
         stl_path
     )
@@ -811,9 +813,13 @@ def generate_visualization(
 
     plotter.add_axes()
 
-    image_path = r"C:\Users\Admin\Desktop\Bosch_DFM\visualization.png"
+    plotter.view_isometric()
+
+    image_path = "visualization.png"
 
     plotter.screenshot(image_path)
+
+    plotter.close()
 
     return image_path
 
