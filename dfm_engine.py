@@ -836,11 +836,37 @@ def generate_plotly_visualization(
     import plotly.graph_objects as go
 
     mesh = trimesh.load_mesh(
-        stl_path
+    stl_path
     )
+
+    print(
+        "Original Faces:",
+        len(mesh.faces)
+    )
+
+    if len(mesh.faces) > 100000:
+
+        mesh = mesh.simplify_quadric_decimation(
+            percent=0.98
+        )
+
+        print(
+            "Reduced Faces:",
+            len(mesh.faces)
+        )
 
     vertices = mesh.vertices
     faces = mesh.faces
+
+    print(
+        "Vertices:",
+        len(vertices)
+    )
+
+    print(
+        "Faces:",
+        len(faces)
+    )
 
     fig = go.Figure(
         data=[

@@ -1,5 +1,6 @@
 import streamlit as st
 import tempfile
+import time
 
 from dfm_engine import (
     analyze_step_file,
@@ -48,7 +49,17 @@ if uploaded_file:
 
     st.write("Running Analysis...")
 
+    analysis_start = time.time()
+
     result = analyze_step_file(temp_path)
+
+    analysis_end = time.time()
+
+    st.write(
+        "Analysis Time:",
+        round(analysis_end - analysis_start, 2),
+        "seconds"
+    )
     
     stl_path = temp_path.replace(
     ".step",
