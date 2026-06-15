@@ -828,3 +828,42 @@ def generate_visualization(
 
     return image_path
 
+def generate_plotly_visualization(
+    stl_path
+):
+
+    import trimesh
+    import plotly.graph_objects as go
+
+    mesh = trimesh.load_mesh(
+        stl_path
+    )
+
+    vertices = mesh.vertices
+    faces = mesh.faces
+
+    fig = go.Figure(
+        data=[
+            go.Mesh3d(
+                x=vertices[:, 0],
+                y=vertices[:, 1],
+                z=vertices[:, 2],
+
+                i=faces[:, 0],
+                j=faces[:, 1],
+                k=faces[:, 2],
+
+                color="lightblue",
+                opacity=1.0
+            )
+        ]
+    )
+
+    fig.update_layout(
+        title="3D Mold Model Viewer",
+        scene=dict(
+            aspectmode="data"
+        )
+    )
+
+    return fig

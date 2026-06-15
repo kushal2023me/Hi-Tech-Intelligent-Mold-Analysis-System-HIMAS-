@@ -4,7 +4,7 @@ import tempfile
 from dfm_engine import (
     analyze_step_file,
     generate_pdf,
-    generate_visualization,
+    generate_plotly_visualization,
     convert_step_to_stl
 )
 
@@ -60,7 +60,23 @@ if uploaded_file:
         stl_path
     )
     
+    fig = generate_plotly_visualization(
+    stl_path
+    )
     
+    st.markdown(
+        """
+        <h2 style='color:#1E90FF'>
+        🧩 Interactive 3D Viewer
+        </h2>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.plotly_chart(
+        fig,
+        use_container_width=True
+    )
 
     st.write("Parting Points:", len(result["parting_points"]))
     st.write("Undercut Points:", len(result["undercut_points"]))
@@ -69,25 +85,7 @@ if uploaded_file:
     st.write("Critical Points:", len(result["critical_points"]))
 
 
-    image_path = generate_visualization(
-        result,
-        stl_path
-    )
-
-    if image_path:
-
-        st.subheader("DFM Visualization")
-
-        st.image(
-            image_path,
-            caption="Blue=Parting, Orange=Undercut, Green=Good Draft, Yellow=Warning Draft, Red=Critical Draft"
-        )
-
-    else:
-
-        st.info(
-            "Visualization disabled on cloud deployment."
-        )
+    
     
 
     st.markdown(
