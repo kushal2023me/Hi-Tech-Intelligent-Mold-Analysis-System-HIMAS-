@@ -74,12 +74,21 @@ if uploaded_file:
         stl_path
     )
 
-    st.subheader("DFM Visualization")
+    if image_path:
 
-    st.image(
-        image_path,
-        caption="Blue=Parting, Orange=Undercut, Green=Good Draft, Yellow=Warning Draft, Red=Critical Draft"
-    )
+        st.subheader("DFM Visualization")
+
+        st.image(
+            image_path,
+            caption="Blue=Parting, Orange=Undercut, Green=Good Draft, Yellow=Warning Draft, Red=Critical Draft"
+        )
+
+    else:
+
+        st.info(
+            "Visualization disabled on cloud deployment."
+        )
+    
 
     st.markdown(
         """
