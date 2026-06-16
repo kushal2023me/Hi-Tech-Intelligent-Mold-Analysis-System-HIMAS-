@@ -1,4 +1,11 @@
 import streamlit as st
+
+st.set_page_config(
+    page_title="Hi-Tech Intelligent Mold Analysis System (HIMAS)",
+    page_icon="🧩",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 import tempfile
 import time
 
@@ -9,29 +16,32 @@ from dfm_engine import (
     convert_step_to_stl
 )
 
-st.markdown(
-    """
-    <h1 style='text-align:center;
-    color:#0E76A8;'>
-    🔧 Hi-Tech Intelligent Mold Analysis System (HIMAS)   
-    </h1>
-    """,
-    unsafe_allow_html=True
-)
+col1, col2 = st.columns([1, 8])
 
-st.markdown(
-    """
-    <div style='text-align:center;
-    font-size:18px;
-    color:gray'>
-    AI-Powered Moldability Analysis for Injection Molded Parts
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+with col1:
+    st.markdown(
+        "<h1 style='font-size:70px;'>🧩</h1>",
+        unsafe_allow_html=True
+    )
+
+with col2:
+
+    st.title("Hi-Tech Intelligent Mold Analysis System (HIMAS)")
+
+    st.caption(
+        "AI-Powered Moldability Analysis for Injection Molded Parts"
+    )
+
+    st.caption(
+        "Developed by- **Kushal R**"
+    )
+
+st.divider()
+
+st.subheader("📂 Upload CAD Model")
 
 uploaded_file = st.file_uploader(
-    "Upload STEP File",
+    "Choose a STEP file",
     type=["step", "stp"]
 )
 
@@ -47,11 +57,17 @@ if uploaded_file:
         tmp.write(uploaded_file.read())
         temp_path = tmp.name
 
-    st.write("Running Analysis...")
+    st.info("Running DFM Analysis...")
+
+    progress = st.progress(0)
+
+    progress.progress(10)
 
     analysis_start = time.time()
 
     result = analyze_step_file(temp_path)
+
+    progress.progress(50)
 
     analysis_end = time.time()
 
@@ -70,10 +86,14 @@ if uploaded_file:
         temp_path,
         stl_path
     )
+
+    progress.progress(80)
     
     fig = generate_plotly_visualization(
     stl_path
     )
+
+    progress.progress(100)
     
     st.markdown(
         """
@@ -233,8 +253,8 @@ if uploaded_file:
     with open(pdf_file, "rb") as file:
 
         st.download_button(
-            label="Download DFM Report",
+            label="Download HIMAS Report",
             data=file,
-            file_name="DFM_Report.pdf",
+            file_name="HIMAS_Report.pdf",
             mime="application/pdf"
         )

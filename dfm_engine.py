@@ -4,6 +4,8 @@ from sklearn.cluster import DBSCAN
 from sklearn.decomposition import PCA
 from collections import Counter
 from reportlab.pdfgen import canvas
+from datetime import datetime
+import os
 
 
 def convert_step_to_stl(
@@ -494,6 +496,7 @@ def analyze_step_file(step_path):
 
     "region_sizes": region_sizes
 }
+
 from reportlab.pdfgen import canvas
 
 def generate_pdf(result):
@@ -504,28 +507,131 @@ def generate_pdf(result):
 
     y = 800
 
-    pdf.setFillColorRGB(
-        0,
-        0.3,
-        0.7
+    # Current Date & Time
+    now = datetime.now()
+
+    report_date = now.strftime("%d-%b-%Y")
+
+    report_time = now.strftime("%I:%M %p")
+
+    # Unique Report ID
+    report_id = "HIMAS-" + now.strftime("%Y%m%d-%H%M%S")
+
+    # Engineer Name
+    engineer = "Kushal R"
+
+    # Software Version
+    software = "HIMAS v1.0"
+
+    # CAD File Name
+    cad_file = "Uploaded STEP Model"
+
+    # Blue Header Bar
+    pdf.setFillColorRGB(0.10, 0.35, 0.75)
+    pdf.rect(0, 770, 595, 72, fill=1)
+
+    # HIMAS Logo (Text Logo)
+    pdf.setFillColorRGB(1, 1, 1)
+    pdf.setFont("Helvetica-Bold", 28)
+    pdf.drawString(40, 800, "⚙")
+
+    pdf.setFont("Helvetica-Bold", 24)
+    pdf.drawString(70, 800, "HIMAS")
+
+    pdf.setFont("Helvetica", 11)
+    pdf.drawString(
+        72,
+        785,
+        "Hi-Tech Intelligent Mold Analysis System"
     )
+
+    # Report Title
+    pdf.setFont("Helvetica-Bold", 18)
+    pdf.drawCentredString(
+        297,
+        750,
+        "HIMAS Report"
+    )
+
+    # Horizontal Line
+    pdf.setStrokeColorRGB(0.1,0.3,0.7)
+    pdf.setLineWidth(2)
+    pdf.line(40,740,555,740)
+
+    y = 710
+
+
+    # ===========================
+    # REPORT INFORMATION BOX
+    # ===========================
+
+    pdf.setFillColorRGB(0.94,0.96,1.0)
+
+    pdf.roundRect(
+        40,
+        y-105,
+        515,
+        100,
+        10,
+        fill=1
+    )
+
+    pdf.setFillColorRGB(0.1,0.3,0.7)
 
     pdf.setFont(
         "Helvetica-Bold",
-        20
+        13
     )
 
     pdf.drawString(
-        120,
-        y,
-        "DESIGN FOR MANUFACTURING REPORT"
+        55,
+        y-20,
+        "REPORT INFORMATION"
     )
 
-    y -= 40
+    pdf.setFillColorRGB(0,0,0)
 
-    pdf.setFont("Helvetica-Bold",12)
+    pdf.setFont("Helvetica",10)
 
-    pdf.drawString(50,y,"Part Information")
+    pdf.drawString(60, y-40, "Report ID")
+    pdf.drawString(180, y-40, report_id)
+
+    pdf.drawString(60, y-58, "Analysis Date")
+    pdf.drawString(180, y-58, report_date)
+
+    pdf.drawString(60, y-76, "Analysis Time")
+    pdf.drawString(180, y-76, report_time)
+
+    pdf.drawString(330, y-40, "Engineer")
+    pdf.drawString(420, y-40, engineer)
+
+    pdf.drawString(330, y-58, "Software")
+    pdf.drawString(420, y-58, software)
+
+    pdf.drawString(330, y-76, "CAD File")
+    pdf.drawString(420, y-76, cad_file)
+
+    y -= 135
+
+    pdf.setFillColorRGB(0.10,0.35,0.75)
+
+    pdf.setFont(
+        "Helvetica-Bold",
+        14
+    )
+
+    pdf.drawString(
+        40,
+        y,
+        "PART INFORMATION"
+    )
+
+    pdf.line(
+        40,
+        y-3,
+        250,
+        y-3
+    )
     y -= 25
 
     pdf.setFont("Helvetica",11)
@@ -538,12 +644,24 @@ def generate_pdf(result):
 
     y -= 40
 
-    pdf.setFont("Helvetica-Bold",12)
+    pdf.setFillColorRGB(0.10,0.35,0.75)
+
+    pdf.setFont(
+        "Helvetica-Bold",
+        14
+    )
 
     pdf.drawString(
-        50,
+        40,
         y,
         "Manufacturability Summary"
+    )
+
+    pdf.line(
+        40,
+        y-3,
+        250,
+        y-3
     )
 
     y -= 25
@@ -574,12 +692,24 @@ def generate_pdf(result):
 
     y -= 40
 
-    pdf.setFont("Helvetica-Bold",12)
+    pdf.setFillColorRGB(0.10,0.35,0.75)
+
+    pdf.setFont(
+        "Helvetica-Bold",
+        14
+    )
 
     pdf.drawString(
-        50,
+        40,
         y,
-        "Core / Cavity Analysis"
+        "Core/Cavity Analysis"
+    )
+
+    pdf.line(
+        40,
+        y-3,
+        250,
+        y-3
     )
 
     y -= 25
@@ -602,42 +732,70 @@ def generate_pdf(result):
 
     y -= 40
 
-    pdf.setFont("Helvetica-Bold",12)
+    pdf.setFillColorRGB(0.10,0.35,0.75)
+
+    pdf.setFont(
+        "Helvetica-Bold",
+        14
+    )
 
     pdf.drawString(
-        50,
+        40,
         y,
-        "Parting Line"
+        "Parting Line Analysis"
+    )
+
+    pdf.line(
+        40,
+        y-3,
+        250,
+        y-3
     )
 
     y -= 25
 
     pdf.setFont("Helvetica",11)
 
-    pdf.drawString(
-        70,
-        y,
-        f"Start Point : {result['start_point']}"
-    )
+    start = result["start_point"].tolist()
+    end = result["end_point"].tolist()
 
+    # Convert very small values to 0.0
+    start = [0.0 if abs(v) < 1e-6 else v for v in start]
+    end = [0.0 if abs(v) < 1e-6 else v for v in end]
+
+    start_text = f"({start[0]:.2f}, {start[1]:.2f}, {start[2]:.2f})"
+    end_text = f"({end[0]:.2f}, {end[1]:.2f}, {end[2]:.2f})"
+
+    pdf.setFont("Helvetica", 11)
+
+    pdf.drawString(70, y, f"Start Point : {start_text}")
     y -= 20
 
-    pdf.drawString(
-        70,
-        y,
-        f"End Point : {result['end_point']}"
-    )
+    pdf.drawString(70, y, f"End Point : {end_text}")
 
     y -= 40
 
+
     score = result["score"]
 
-    pdf.setFont("Helvetica-Bold",12)
+    pdf.setFillColorRGB(0.10,0.35,0.75)
+
+    pdf.setFont(
+        "Helvetica-Bold",
+        14
+    )
 
     pdf.drawString(
-        50,
+        40,
         y,
         "Overall DFM Assessment"
+    )
+
+    pdf.line(
+        40,
+        y-3,
+        250,
+        y-3
     )
 
     y -= 25
